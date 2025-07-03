@@ -22,6 +22,7 @@ void RunMenu()
         {
             case "1": GetAllProduct(); break;
             case "2": SearchProduct(); break;
+            case "3": AddProduct(); break;
             case "0":
                 Console.WriteLine("Goodbye");
                 return;
@@ -35,6 +36,7 @@ void DisplayMenu()
     Console.WriteLine("What would you like to do?");
     Console.WriteLine("1. 查看所有產品。");
     Console.WriteLine("2. 查詢產品。");
+    Console.WriteLine("3. 新增產品資訊。");
     Console.WriteLine("0. 離開。");
 }
 
@@ -57,7 +59,98 @@ void GetAllProduct()
 
 void SearchProduct()
 {
-    Console.WriteLine("已進入 SearchProduct");
-    Console.WriteLine(""); 
-    Console.WriteLine(""); 
+    Console.WriteLine("輸入欲查詢的產品編號或產品名稱: ");
+    int input = ReadIntLine();
+    var product = productRepository.GetProductById(input);
+    // string? input = Console.ReadLine();
+    // var product = productRepository.GetProductById(ReadInt(input));
+    if (product != null)
+    {
+        Console.WriteLine("------------------------------------------");
+        Console.WriteLine("ID | Name | Price |Quantity | Status");
+        Console.WriteLine("------------------------------------------");
+        Console.WriteLine(product);
+        Console.WriteLine("------------------------------------------");
+        
+    }
+    // else
+    // {
+    //     Console.WriteLine("查無此產品!!請重新輸入!!");
+    // }
+// var product = productRepository.GetProductById(input);
+    // if (product != null)
+    // {
+    //     Console.WriteLine("------------------------------------------");
+    //     Console.WriteLine("ID | Name | Price |Quantity | Status");
+    //     Console.WriteLine("------------------------------------------");
+    //     Console.WriteLine(product);
+    //     Console.WriteLine("------------------------------------------");
+    // }
+}
+
+void AddProduct()
+{
+    Console.WriteLine("輸入產品名稱: ");
+    string name = Console.ReadLine();
+    Console.WriteLine("輸入產品價格: ");
+    decimal price = ReadDecimalLine();
+    Console.WriteLine("輸入產品數量: ");
+    int quantity = ReadIntLine();
+    productRepository.AddProduct(name, price, quantity);
+}
+
+int ReadInt(string input)
+{
+    try
+    {
+        return Convert.ToInt32(input);
+    }
+    catch (FormatException e)
+    {
+        Console.WriteLine("請輸入有效數字!!");
+        return 0;
+    }
+}
+
+int ReadIntLine(int defaultValue = 0)
+{
+    while (true)
+    {
+        string input = Console.ReadLine();
+        if (string.IsNullOrWhiteSpace(input) && defaultValue != 0)
+        {
+            return defaultValue;
+        }
+        //string parsing to int
+        if (int.TryParse(input, out int value))
+        {
+            return value;
+        }
+        else
+        {
+            Console.WriteLine("請輸入有效數字。");
+            return defaultValue;
+        }
+    }
+}
+
+decimal ReadDecimalLine(decimal defaultValue = 0.0m)
+{
+    while (true)
+    {
+        string input = Console.ReadLine();
+        if (string.IsNullOrWhiteSpace(input) && defaultValue != 0.0m)
+        {
+            return defaultValue;
+        }
+        //string parsing to int
+        if (decimal.TryParse(input, out decimal value))
+        {
+            return value;
+        }
+        else
+        {
+            Console.WriteLine("請輸入有效數字。");
+        }
+    }
 }
