@@ -4,6 +4,8 @@ using MySql.Data.MySqlClient;
 namespace InventorySystem.Repositories;
 
 public class MySqlProductRepository : IProductRepository
+//java: implement interface
+//java: extend ParentObj
 {
  private readonly string _connectionString;
  public MySqlProductRepository(string connectionString)

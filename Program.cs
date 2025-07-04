@@ -1,4 +1,5 @@
 using InventorySystem.Repositories;
+using InventorySystem.Services;
 
 //Server: mysql所在伺服器位置 (localhost or ip xxx.xxx.xxx.xxx)
 //Port: mysql端口 (預設 3306)
@@ -7,7 +8,10 @@ using InventorySystem.Repositories;
 //pwd: mysql使用者密碼
 const string MySql_Connetion_String = "Server=localhost;Port=3306;Database=Inventory_db;Uid=admin;Pwd=&Lhq2w3e4r5TC.;";
 
-MySqlProductRepository productRepository = new MySqlProductRepository(MySql_Connetion_String);
+// MySqlProductRepository mySqlProductRepository = new MySqlProductRepository(MySql_Connetion_String);
+// ^MySqlProductRepository : IProductRepository
+IProductRepository productRepository = new MySqlProductRepository(MySql_Connetion_String);
+InventoryService inventoryService = new InventoryService(productRepository);
 
 RunMenu();
 return;
@@ -43,23 +47,21 @@ void DisplayMenu()
 void GetAllProduct()
 {
     Console.WriteLine("\n--- 所有產品列表 ---");
-    var products = productRepository.GetAllProducts();
-    if (products.Any())
+    var products = inventoryService.GetAllProducts();
+    // var productsFromRepo = productRepository.GetAllProducts();
+    Console.WriteLine("------------------------------------------");
+    Console.WriteLine("ID | Name | Price |Quantity | Status");
+    Console.WriteLine("------------------------------------------");
+    foreach (var product in products)
     {
-        Console.WriteLine("------------------------------------------");
-        Console.WriteLine("ID | Name | Price |Quantity | Status");
-        Console.WriteLine("------------------------------------------");
-        foreach (var product in products)
-        {
-            Console.WriteLine(product);
-        }
+        Console.WriteLine(product);
     }
     Console.WriteLine("------------------------------------------");
 }
 
 void SearchProduct()
 {
-    Console.WriteLine("輸入欲查詢的產品編號或產品名稱: ");
+    Console.WriteLine("輸入欲查詢的產品編號: ");
     int input = ReadIntLine();
     var product = productRepository.GetProductById(input);
     // string? input = Console.ReadLine();
@@ -129,7 +131,6 @@ int ReadIntLine(int defaultValue = 0)
         else
         {
             Console.WriteLine("請輸入有效數字。");
-            return defaultValue;
         }
     }
 }
