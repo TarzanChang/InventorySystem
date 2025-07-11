@@ -23,7 +23,7 @@ if (File.Exists(configFile))
             var dbConfig = config["Database"];
             connectionString =
                 $"Server={dbConfig["Server"]};Port={dbConfig["Port"]};Database={dbConfig["Database"]};uid={dbConfig["Uid"]};pwd={dbConfig["Pwd"]};";
-            Console.WriteLine("讀取資料庫連接字串成功!!");
+            Console.WriteLine("讀取資料庫連接字串成功!!"+connectionString);
         }
     }
     catch (Exception e)
@@ -97,9 +97,11 @@ void RunMenu()
         switch (input)
         {
             case "1": GetAllProduct(); break;
-            case "2": SearchProduct(); break;
+            case "2": SearchProductById(); break;
             case "3": AddProduct(); break;
             case "4": UpdateProduct(); break;
+            case "5": SearchProductByName(); break;
+            case "6": SearchLowQuantityProduct(); break;
             case "0":
                 Console.WriteLine("Goodbye");
                 return;
@@ -112,9 +114,11 @@ void DisplayMenu()
     Console.WriteLine("Welcome to Inventory System!!");
     Console.WriteLine("What would you like to do?");
     Console.WriteLine("1. 查看所有產品。");
-    Console.WriteLine("2. 查詢產品。");
+    Console.WriteLine("2. 查詢產品ID。");
     Console.WriteLine("3. 新增產品資訊。");
     Console.WriteLine("4. 更新產品資訊");
+    Console.WriteLine("5. 查詢產品名稱");
+    Console.WriteLine("6. 查詢庫存偏低");
     Console.WriteLine("0. 離開。");
 }
 
@@ -134,7 +138,7 @@ void GetAllProduct()
     emailService.NotifyUser("JOJO","查詢所有產品!!");
 }
 
-void SearchProduct()
+void SearchProductById()
 {
     Console.WriteLine("輸入欲查詢的產品編號: ");
     int input = ReadIntLine();
@@ -150,10 +154,10 @@ void SearchProduct()
         Console.WriteLine("------------------------------------------");
         
     }
-    // else
-    // {
-    //     Console.WriteLine("查無此產品!!請重新輸入!!");
-    // }
+    else
+    {
+        Console.WriteLine("查無此產品!!請重新輸入!!");
+    }
 // var product = productRepository.GetProductById(input);
     // if (product != null)
     // {
@@ -163,6 +167,46 @@ void SearchProduct()
     //     Console.WriteLine(product);
     //     Console.WriteLine("------------------------------------------");
     // }
+}
+
+void SearchLowQuantityProduct()
+{
+    Console.WriteLine("查詢產品庫存偏低 ");
+    var products = inventoryService.SearchLowQuantityProduct();
+
+    if (products.Any())
+    {
+        Console.WriteLine("------------------------------------------");
+        Console.WriteLine("ID | Name | Price |Quantity | Status");
+        Console.WriteLine("------------------------------------------");
+        foreach (var product in products)
+        {
+            Console.WriteLine(product);
+        }
+
+        Console.WriteLine("------------------------------------------");
+    }
+}
+
+void SearchProductByName()
+{
+    Console.WriteLine("查詢產品名稱關鍵字: ");
+    string input = Console.ReadLine();
+    var products = inventoryService.SearchProductByName(input);
+
+    if (products.Any())
+    {
+        Console.WriteLine("------------------------------------------");
+        Console.WriteLine($"------------查詢條件為: ({input})----------");
+        Console.WriteLine("ID | Name | Price |Quantity | Status");
+        Console.WriteLine("------------------------------------------");
+        foreach (var product in products)
+        {
+            Console.Write(product);
+        }
+
+        Console.WriteLine("------------------------------------------");
+    }
 }
 
 void AddProduct()

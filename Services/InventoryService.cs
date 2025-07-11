@@ -1,5 +1,6 @@
 using InventorySystem.Models;
 using InventorySystem.Repositories;
+using Org.BouncyCastle.Asn1.Cmp;
 
 namespace InventorySystem.Services;
 
@@ -110,5 +111,72 @@ public class InventoryService
         {
             Console.WriteLine($"\n 錯誤:  {e.Message}");
         }
+    }
+
+    public List<Product> SearchProductByName(string? input)
+    {
+        try
+        {
+            //呼叫介面，而非實作 (DI)
+            List<Product> products = _productRepository.GetAllProducts();//呼叫介面(不是呼叫實作物件)
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                return products;
+            }
+            
+            var results = products.Where(product => product.Name.ToLower().Contains(input.ToLower())).ToList();
+            
+            // var results = products.Where(product => keyword(product,input).ToList();
+    
+            // var results = products.Where(product =>
+            // {
+            //     return product.Name.ToLower().Contains(input.ToLower());
+            // }).ToList();
+    
+            if (!results.Any())
+            {
+                Console.WriteLine("No products found!!");
+            }
+            return results;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"讀取產品列表失敗:  {e.Message}");
+            return new List<Product>();
+        }   
+    }
+    
+    bool keyword(Product product, string? input)
+    {
+        return product.Name.ToLower().Contains(input.ToLower());
+    }
+    public List<Product> SearchLowQuantityProduct()
+    {
+        try
+        {
+            //呼叫介面，而非實作 (DI)
+            List<Product> products = _productRepository.GetAllProducts();//呼叫介面(不是呼叫實作物件)
+            
+            // var results = products.Where(product => product.Quantity < 10).ToList();
+            var results = products.Where(product => product.Status == Product.ProductStatus.LowStock).ToList();
+            
+            // var results = products.Where(product => keyword(product,input).ToList();
+    
+            // var results = products.Where(product =>
+            // {
+            //     return product.Name.ToLower().Contains(input.ToLower());
+            // }).ToList();
+    
+            if (!results.Any())
+            {
+                Console.WriteLine("No products found!!");
+            }
+            return results;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"讀取產品列表失敗:  {e.Message}");
+            return new List<Product>();
+        }   
     }
 }

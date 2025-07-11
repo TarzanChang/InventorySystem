@@ -31,13 +31,13 @@ public class Product
     }
 
     //If Table Id column 有 auto_increment
-    public Product(string name, decimal price, int quantity)
-    {
-        Name = name;
-        Price = price;
-        Quantity = quantity;
-        UpdateStatus();
-    }
+    // public Product(string name, decimal price, int quantity)
+    // {
+    //     Name = name;
+    //     Price = price;
+    //     Quantity = quantity;
+    //     UpdateStatus();
+    // }
     public override string ToString()
     {
         return $"ID: {Id}, Name: {Name}, Price: {Price}, Quantity: {Quantity}, Status: {Status}";
