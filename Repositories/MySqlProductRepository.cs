@@ -107,28 +107,73 @@ public Product GetProductById(int id)
  return product;
 }
 
- public void AddProduct(string? name,decimal price,int quantity)
+ public void AddProduct(Product product)
  {
   using (var connection = new MySqlConnection(_connectionString))
   {
    connection.Open();
    // string selectSql = "SELECT * FROM `products` WHERE id = " + id;
    // gen by AI ...
-   string insertSql = "insert into products(name,price,quantity,status) values(@name,@price,@quantity,@status)";
+   //If Table Id column 沒有 auto_increment
+   string insertSql = "insert into products(id,name,price,quantity,status) values(@id,@name,@price,@quantity,@status)";
+   //If Table Id column 有 auto_increment
+   // string insertSql = "insert into products(name,price,quantity,status) values(@name,@price,@quantity,@status)";
    using (MySqlCommand cmd = new MySqlCommand(insertSql, connection))
    {
     // 防止sql injection...
-    cmd.Parameters.AddWithValue("@name", name);
-    cmd.Parameters.AddWithValue("@price", price);
-    cmd.Parameters.AddWithValue("@quantity", quantity);
+    //If Table Id column 沒有 auto_increment
+    cmd.Parameters.AddWithValue("@id", product.Id);
+    //If Table Id column 沒有 auto_increment 可不需要
+    
+    cmd.Parameters.AddWithValue("@name", product.Name);
+    cmd.Parameters.AddWithValue("@price", product.Price);
+    cmd.Parameters.AddWithValue("@quantity", product.Quantity);
     //todo refactor
-    cmd.Parameters.AddWithValue("@status", 1);
+    cmd.Parameters.AddWithValue("@status", product.Status);
+    cmd.ExecuteNonQuery();
+   }
+  }
+ }
+ 
+//If Table Id column 沒有 auto_increment
+ public int GetNextProductId()
+ {
+  using (var connection = new MySqlConnection(_connectionString))
+  {
+   connection.Open();
+   string selectSql = @"SELECT IFNULL(MAX(id),0) FROM products";
+   using (MySqlCommand cmd = new MySqlCommand(selectSql, connection))
+   {
+    var result = cmd.ExecuteScalar();
+    if (result != null)
+    {
+     return Convert.ToInt32(result) + 1;
+    }
+    return 0;
+   }
+  }
+ }
+ 
+ public void UpdateProduct(Product product)
+ {
+  using (var connection = new MySqlConnection(_connectionString))
+  {
+   connection.Open();
+   string insertSql = "update products set name = @name,price = @price,quantity = @quantity,status = @status where id = @id";
+   using (MySqlCommand cmd = new MySqlCommand(insertSql, connection))
+   {
+    // 防止sql injection...
+    cmd.Parameters.AddWithValue("@name", product.Name);
+    cmd.Parameters.AddWithValue("@price", product.Price);
+    cmd.Parameters.AddWithValue("@quantity", product.Quantity);
+    cmd.Parameters.AddWithValue("@status", product.Status);
+    cmd.Parameters.AddWithValue("@id", product.Id);
     cmd.ExecuteNonQuery();
    }
   }
  }
 
-public List<Product> GetProducts()
+ public List<Product> GetProducts()
   {
    throw new NotImplementedException();
   }

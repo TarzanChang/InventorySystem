@@ -20,6 +20,7 @@ public class Product
     }
 
     //建構子
+    //If Table Id column 沒有 auto_increment
     public Product(int id, string name, decimal price, int quantity)
     {
         Id = id;
@@ -29,6 +30,14 @@ public class Product
         UpdateStatus();
     }
 
+    //If Table Id column 有 auto_increment
+    public Product(string name, decimal price, int quantity)
+    {
+        Name = name;
+        Price = price;
+        Quantity = quantity;
+        UpdateStatus();
+    }
     public override string ToString()
     {
         return $"ID: {Id}, Name: {Name}, Price: {Price}, Quantity: {Quantity}, Status: {Status}";
